@@ -1,291 +1,117 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import Input from '@/components/ui/Input';
-import CartItem from '@/components/cart/CartItem';
-import CartSummary from '@/components/cart/CartSummary';
+import { useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 import { useCartContext } from '@/components/cart/CartContext';
 
-export default function CheckoutPage() {
-  const router = useRouter();
-  const { cart, total, clearCart } = useCartContext();
-  const [paymentMethod, setPaymentMethod] = useState<'e-money' | 'cash'>('e-money');
-  const [loading, setLoading] = useState(false);
-  const [isClient, setIsClient] = useState(false);
-  const [shouldRedirect, setShouldRedirect] = useState(false);
+interface SuccessModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  orderNumber: string;
+  onSuccessComplete: () => void;
+}
 
-  // Ensure we're on the client side
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+export default function SuccessModal({ isOpen, onClose, orderNumber, onSuccessComplete }: SuccessModalProps) {
+  const { items, getTotalPrice } = useCartContext();
 
-  // Handle redirect when cart is empty
   useEffect(() => {
-    if (isClient && (!cart || cart.length === 0)) {
-      setShouldRedirect(true);
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
     }
-  }, [isClient, cart]);
 
-  // Perform the actual redirect
-  useEffect(() => {
-    if (shouldRedirect) {
-      router.push('/');
-    }
-  }, [shouldRedirect, router]);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-
-    const formData = new FormData(e.currentTarget);
-    const orderData = {
-      items: cart || [],
-      total: total || 0,
-      customerInfo: {
-        name: formData.get('name') as string,
-        email: formData.get('email') as string,
-        phone: formData.get('phone') as string,
-        address: formData.get('address') as string,
-        zipCode: formData.get('zipCode') as string,
-        city: formData.get('city') as string,
-        country: formData.get('country') as string,
-      },
-      paymentMethod,
+    return () => {
+      document.body.style.overflow = 'unset';
     };
+  }, [isOpen]);
 
-    // Simulate API call
-    setTimeout(() => {
-      clearCart();
-      router.push('/checkout/success/123');
-    }, 1000);
-  };
+  if (!isOpen) return null;
 
-  // Show loading while checking cart state
-  if (!isClient) {
-    return (
-      <div className="min-h-screen flex flex-col bg-lighter">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">Loading...</div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  // Show redirect message
-  if (shouldRedirect) {
-    return (
-      <div className="min-h-screen flex flex-col bg-lighter">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">Redirecting...</div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+  const subtotal = getTotalPrice();
+  const shipping = 50;
+  const vat = Math.floor(subtotal * 0.2);
+  const grandTotal = subtotal + shipping;
 
   return (
-    <div className="min-h-screen flex flex-col bg-lighter">
-      <Header />
+    <>
+      <div 
+        className="fixed inset-0 bg-black/50 z-50 backdrop-blur-sm"
+        onClick={onClose}
+      />
       
-      <main className="flex-1 py-20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-24">
-          <button
-            onClick={() => router.back()}
-            className="text-dark/50 hover:text-primary transition-colors mb-8"
-          >
-            Go Back
-          </button>
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl mx-4">
+        <div className="bg-white rounded-lg p-6 md:p-8 max-h-[90vh] overflow-y-auto">
+          <div className="mb-6">
+            <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
+              <span className="text-white text-2xl">✓</span>
+            </div>
+          </div>
 
-          <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Checkout Form - Left Side */}
-              <div className="lg:col-span-2 bg-white rounded-lg p-6 md:p-8">
-                <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-wider mb-8">
-                  CHECKOUT
-                </h1>
+          <div className="mb-6">
+            <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-wider mb-4">
+              THANK YOU
+              <br />
+              FOR YOUR ORDER
+            </h2>
+            <p className="text-dark/75">
+              You will receive an email confirmation shortly.
+            </p>
+            <p className="text-sm text-dark/50 mt-2">Order #: {orderNumber}</p>
+          </div>
 
-                {/* Billing Details */}
-                <div className="mb-8">
-                  <h2 className="text-sm font-bold text-primary uppercase tracking-widest mb-4">
-                    Billing Details
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Input 
-                        name="name" 
-                        label="Name" 
-                        placeholder="Alexei Ward" 
-                        required 
-                      />
-                    </div>
-                    <div>
-                      <Input 
-                        name="email" 
-                        label="Email Address" 
-                        type="email" 
-                        placeholder="alexei@mail.com" 
-                        required 
-                      />
-                    </div>
-                    <div className="md:col-span-2">
-                      <Input 
-                        name="phone" 
-                        label="Phone Number" 
-                        type="tel" 
-                        placeholder="+1 202-555-0136" 
-                        required 
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Shipping Info */}
-                <div className="mb-8">
-                  <h2 className="text-sm font-bold text-primary uppercase tracking-widest mb-4">
-                    Shipping Info
-                  </h2>
-                  <div className="grid grid-cols-1 gap-4">
-                    <div>
-                      <Input 
-                        name="address" 
-                        label="Your Address" 
-                        placeholder="1137 Williams Avenue" 
-                        required 
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <Input 
-                        name="zipCode" 
-                        label="ZIP Code" 
-                        placeholder="10001" 
-                        required 
-                      />
-                      <Input 
-                        name="city" 
-                        label="City" 
-                        placeholder="New York" 
-                        required 
-                      />
-                    </div>
-                    <div>
-                      <Input 
-                        name="country" 
-                        label="Country" 
-                        placeholder="United States" 
-                        required 
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Payment Details */}
-                <div>
-                  <h2 className="text-sm font-bold text-primary uppercase tracking-widest mb-4">
-                    Payment Details
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold mb-3">Payment Method</label>
-                      <div className="space-y-3">
-                        <label className="flex items-center gap-4 border border-gray-300 rounded-lg px-4 py-3 cursor-pointer hover:border-primary has-[:checked]:border-primary">
-                          <input
-                            type="radio"
-                            name="paymentMethod"
-                            value="e-money"
-                            checked={paymentMethod === 'e-money'}
-                            onChange={(e) => setPaymentMethod(e.target.value as 'e-money')}
-                            className="w-4 h-4 text-primary"
-                          />
-                          <span className="font-bold text-sm">e-Money</span>
-                        </label>
-                        <label className="flex items-center gap-4 border border-gray-300 rounded-lg px-4 py-3 cursor-pointer hover:border-primary has-[:checked]:border-primary">
-                          <input
-                            type="radio"
-                            name="paymentMethod"
-                            value="cash"
-                            checked={paymentMethod === 'cash'}
-                            onChange={(e) => setPaymentMethod(e.target.value as 'cash')}
-                            className="w-4 h-4 text-primary"
-                          />
-                          <span className="font-bold text-sm">Cash on Delivery</span>
-                        </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 rounded-lg overflow-hidden mb-8">
+            <div className="bg-gray-100 p-6">
+              <div className="space-y-4">
+                {items.slice(0, 1).map((item) => (
+                  <div key={item.id} className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-white rounded-lg overflow-hidden">
+                        <Image
+                          src={item.image || '/assets/placeholder.jpg'}
+                          alt={item.name}
+                          width={48}
+                          height={48}
+                          className="object-cover"
+                        />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm">{item.name}</h4>
+                        <p className="text-sm text-dark/50">${item.price}</p>
                       </div>
                     </div>
-
-                    <div className="space-y-4">
-                      {paymentMethod === 'e-money' && (
-                        <>
-                          <Input 
-                            name="emoneyNumber" 
-                            label="e-Money Number" 
-                            placeholder="238521993" 
-                            required 
-                          />
-                          <Input 
-                            name="emoneyPin" 
-                            label="e-Money PIN" 
-                            placeholder="6891" 
-                            required 
-                          />
-                        </>
-                      )}
-
-                      {paymentMethod === 'cash' && (
-                        <div className="flex gap-4 p-4 bg-gray-50 rounded-lg mt-6">
-                          <span className="text-3xl">💵</span>
-                          <p className="text-sm text-dark/50 leading-relaxed">
-                            The 'Cash on Delivery' option enables you to pay in cash when our delivery courier arrives at your residence. Just make sure your address is correct so that your order will not be cancelled.
-                          </p>
-                        </div>
-                      )}
-                    </div>
+                    <span className="text-sm font-bold text-dark/50">x{item.quantity}</span>
                   </div>
-                </div>
+                ))}
               </div>
 
-              {/* Order Summary - Right Side */}
-              <div className="lg:col-span-1">
-                <div className="bg-white rounded-lg p-6">
-                  <h2 className="text-lg font-bold uppercase tracking-wider mb-6">SUMMARY</h2>
-                  <div className="space-y-4 mb-6">
-                    {cart.map((item) => (
-                      <CartItem 
-                        key={item.id} 
-                        item={item} 
-                        showQuantityControls={false}
-                        compact={true}
-                      />
-                    ))}
-                  </div>
-                  
-                  {/* Cart Summary */}
-                  <CartSummary
-                    total={total || 0}
-                    showCheckoutButton={false}
-                  />
-
-                  {/* Continue & Pay Button */}
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-primary hover:bg-accent text-white font-bold text-sm tracking-widest uppercase px-8 py-4 transition-colors disabled:opacity-50 mt-6"
-                  >
-                    {loading ? 'Processing...' : 'CONTINUE & PAY'}
-                  </button>
+              {items.length > 1 && (
+                <div className="pt-4 border-t border-gray-300 mt-4">
+                  <p className="text-center text-sm text-dark/50">
+                    and {items.length - 1} other item(s)
+                  </p>
                 </div>
+              )}
+            </div>
+
+            <div className="bg-dark text-white p-6 flex flex-col justify-center">
+              <div className="space-y-2">
+                <p className="text-white/75 uppercase text-sm">Grand Total</p>
+                <p className="text-lg font-bold">${grandTotal.toLocaleString()}</p>
               </div>
             </div>
-          </form>
-        </div>
-      </main>
+          </div>
 
-      <Footer />
-    </div>
+          <Link
+            href="/"
+            className="w-full bg-primary hover:bg-accent text-white font-bold text-sm tracking-widest uppercase px-8 py-4 transition-colors text-center block"
+            onClick={onSuccessComplete}
+          >
+            BACK TO HOME
+          </Link>
+        </div>
+      </div>
+    </>
   );
 }

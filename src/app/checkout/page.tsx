@@ -6,43 +6,116 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Input from '@/components/ui/Input';
 import CartItem from '@/components/cart/CartItem';
+import SuccessModal from '@/app/checkout/success/[id]/page';
 import { useCartContext } from '@/components/cart/CartContext';
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, total, clearCart } = useCartContext();
+  const { items, clearCart, getTotalPrice } = useCartContext();
   const [paymentMethod, setPaymentMethod] = useState<'e-money' | 'cash'>('e-money');
   const [loading, setLoading] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [orderNumber, setOrderNumber] = useState('');
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const generateOrderNumber = () => {
+    return 'ORD-' + Date.now().toString().slice(-6);
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
+    
+    const calculatedTotal = getTotalPrice();
+    const shipping = 50;
+    const vatAmount = Math.floor(calculatedTotal * 0.2); 
+    const grandTotal = calculatedTotal + shipping;
+    
     const orderData = {
-      items: items || [],
-      total: total || 0,
-      customerInfo: {
+      orderNumber: generateOrderNumber(),
+      items: items.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      })),
+      totals: {
+        subtotal: calculatedTotal,
+        shipping: 50,
+        taxes: vatAmount, 
+        grandTotal: grandTotal,
+      },
+      customer: {
         name: formData.get('name') as string,
         email: formData.get('email') as string,
         phone: formData.get('phone') as string,
+      },
+      shipping: {
         address: formData.get('address') as string,
-        zipCode: formData.get('zipCode') as string,
         city: formData.get('city') as string,
+        zip: formData.get('zipCode') as string, 
         country: formData.get('country') as string,
       },
-      paymentMethod,
+      paymentMethod: paymentMethod,
+      status: 'confirmed',
+      createdAt: Date.now(),
     };
 
-    setTimeout(() => {
-      clearCart();
-      router.push('/checkout/success/123');
-    }, 1000);
+    try {
+      console.log('Sending order data:', orderData);
+      
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      const responseText = await response.text();
+      console.log('Raw API response:', responseText);
+      
+      let result;
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Failed to parse JSON response:', responseText);
+        throw new Error('Invalid JSON response from server');
+      }
+
+      console.log('Parsed API Response:', result);
+      console.log('Response status:', response.status);
+
+      if (response.ok) {
+        const newOrderNumber = orderData.orderNumber;
+        setOrderNumber(newOrderNumber);
+        setShowSuccessModal(true);
+      } else {
+        console.error('Failed to create order. Status:', response.status, 'Error:', result);
+        alert(`Failed to create order: ${result.error || result.message || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error submitting order:', error);
+      alert('Error: ' + (error instanceof Error ? error.message : 'Unknown error'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleModalClose = () => {
+    setShowSuccessModal(false);
+  };
+
+  const handleSuccessComplete = () => {
+    clearCart();
+    setShowSuccessModal(false);
+    router.push('/');
   };
 
   if (!isMounted) {
@@ -77,6 +150,10 @@ export default function CheckoutPage() {
     );
   }
 
+  const calculatedTotal = getTotalPrice();
+  const vatAmount = Math.round(calculatedTotal * 0.2);
+  const grandTotal = calculatedTotal + 50 + vatAmount;
+
   return (
     <div className="min-h-screen flex flex-col bg-lighter">
       <Header />
@@ -92,13 +169,11 @@ export default function CheckoutPage() {
 
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Checkout Form - Left Side */}
               <div className="lg:col-span-2 bg-white rounded-lg p-6 md:p-8">
                 <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-wider mb-8">
                   CHECKOUT
                 </h1>
 
-                {/* Billing Details */}
                 <div className="mb-8">
                   <h2 className="text-sm font-bold text-primary uppercase tracking-widest mb-4">
                     Billing Details
@@ -133,7 +208,6 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                {/* Shipping Info */}
                 <div className="mb-8">
                   <h2 className="text-sm font-bold text-primary uppercase tracking-widest mb-4">
                     Shipping Info
@@ -172,7 +246,6 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                {/* Payment Details */}
                 <div>
                   <h2 className="text-sm font-bold text-primary uppercase tracking-widest mb-4">
                     Payment Details
@@ -237,7 +310,6 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* Order Summary - Right Side - FIXED: Removed duplicate section */}
               <div className="lg:col-span-1">
                 <div className="bg-white rounded-lg p-6">
                   <h2 className="text-lg font-bold uppercase tracking-wider mb-6">SUMMARY</h2>
@@ -252,11 +324,10 @@ export default function CheckoutPage() {
                     ))}
                   </div>
                   
-                  {/* Checkout Summary */}
                   <div className="space-y-2 mb-6">
                     <div className="flex justify-between items-center">
                       <span className="text-dark/50 uppercase text-sm">TOTAL</span>
-                      <span className="font-bold text-lg">$ {(total || 0).toLocaleString()}</span>
+                      <span className="font-bold text-lg">$ {calculatedTotal.toLocaleString()}</span>
                     </div>
 
                     <div className="flex justify-between items-center">
@@ -266,13 +337,13 @@ export default function CheckoutPage() {
 
                     <div className="flex justify-between items-center">
                       <span className="text-dark/50 uppercase text-sm">VAT (INCLUDED)</span>
-                      <span className="font-bold text-lg">$ {Math.round((total || 0) * 0.2).toLocaleString()}</span>
+                      <span className="font-bold text-lg">$ {vatAmount.toLocaleString()}</span>
                     </div>
 
                     <div className="flex justify-between items-center pt-4">
                       <span className="text-dark/50 uppercase text-sm">GRAND TOTAL</span>
                       <span className="font-bold text-lg text-primary">
-                        $ {Math.round((total || 0) + 50 + ((total || 0) * 0.2)).toLocaleString()}
+                        $ {grandTotal.toLocaleString()}
                       </span>
                     </div>
                   </div>
@@ -292,6 +363,13 @@ export default function CheckoutPage() {
       </main>
 
       <Footer />
+
+      <SuccessModal 
+        isOpen={showSuccessModal}
+        onClose={handleModalClose}
+        orderNumber={orderNumber}
+        onSuccessComplete={handleSuccessComplete}
+      />
     </div>
   );
 }

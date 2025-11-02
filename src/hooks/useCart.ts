@@ -1,7 +1,8 @@
 'use client';
 
+import { CartItem } from '@/types';
 import { useState, useEffect } from 'react';
-import { CartItem } from '@/types/product';
+
 
 const CART_STORAGE_KEY = 'audiophile-cart';
 
@@ -9,7 +10,6 @@ export function useCart() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load cart from localStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem(CART_STORAGE_KEY);
     if (stored) {
@@ -22,7 +22,6 @@ export function useCart() {
     setIsLoaded(true);
   }, []);
 
-  // Save cart to localStorage whenever it changes
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));

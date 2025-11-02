@@ -1,4 +1,3 @@
-// convex/products.ts
 import { query } from "./_generated/server";
 import { v } from "convex/values";
 
@@ -47,5 +46,3 @@ export const getFeaturedProducts = query({
     };
   },
 });
-
-// SEED FUNCTION HAS BEEN REMOVED - Your database is already populated!

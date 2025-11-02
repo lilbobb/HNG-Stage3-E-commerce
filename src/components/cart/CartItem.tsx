@@ -17,7 +17,6 @@ export default function CartItem({ item, showQuantityControls = true, compact = 
 
   return (
     <div className={`flex items-center gap-4 ${compact ? 'p-0' : 'p-4'} bg-white rounded-lg`}>
-      {/* Product Image */}
       <div className={`relative ${compact ? 'w-16 h-16' : 'w-20 h-20'} rounded-lg overflow-hidden bg-light flex-shrink-0`}>
         {item.image ? (
           <Image
@@ -33,7 +32,6 @@ export default function CartItem({ item, showQuantityControls = true, compact = 
         )}
       </div>
 
-      {/* Product Info */}
       <div className="flex-1 min-w-0">
         <h3 className={`font-bold ${compact ? 'text-sm' : 'text-base'} uppercase truncate text-dark`}>
           {item.name}
@@ -43,14 +41,13 @@ export default function CartItem({ item, showQuantityControls = true, compact = 
         </p>
       </div>
 
-      {/* Quantity Controls */}
       {showQuantityControls ? (
         <div className="flex items-center gap-3 text-dark">
           <QuantitySelector
             quantity={item.quantity}
             onIncrease={() => updateQuantity(item.id, item.quantity + 1)}
             onDecrease={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
-            compact
+            // compact={compact}
           />
         </div>
       ) : (

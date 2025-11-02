@@ -26,15 +26,17 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
 
   return (
     <>
-      {/* Backdrop */}
       <div 
         className="fixed inset-0 bg-black/50 z-50"
         onClick={onClose}
       />
       
-      {/* Modal */}
-      <div className="fixed top-24 right-6 lg:right-24 w-full max-w-[377px] bg-white rounded-lg z-50 max-h-[488px] overflow-hidden flex flex-col shadow-xl">
-        {/* Header */}
+      <div className="
+          fixed z-50 bg-white rounded-lg shadow-xl flex flex-col max-h-[488px]
+          w-[90%] max-w-[377px]
+          left-1/2 -translate-x-1/2 top-6
+          lg:top-24 lg:right-24 lg:left-auto lg:translate-x-0
+        ">
         <div className="flex justify-between items-center p-6 border-b border-gray-200">
           <h3 className="text-lg font-bold uppercase tracking-wider text-dark">
             CART ({items.length})
@@ -47,7 +49,6 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
           </button>
         </div>
 
-        {/* Cart Items */}
         <div className="flex-1 overflow-y-auto p-6">
           {items.length === 0 ? (
             <div className="text-center py-8">
@@ -66,7 +67,6 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
           )}
         </div>
 
-        {/* Footer with Total and Checkout */}
         {items.length > 0 && (
           <div className="p-6 border-t border-gray-200">
             <div className="flex justify-between items-center mb-6">

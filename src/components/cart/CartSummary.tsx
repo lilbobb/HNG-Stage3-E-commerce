@@ -18,7 +18,7 @@ const CartSummary: React.FC<CartSummaryProps> = ({
   showCheckoutButton = true,
   onCheckout,
 }) => {
-  const calculatedVat = vat ?? total * 0.2; // 20% VAT
+  const calculatedVat = vat ?? total * 0.2; 
   const grandTotal = total + shipping + calculatedVat;
 
   return (

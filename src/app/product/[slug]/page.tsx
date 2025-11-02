@@ -19,7 +19,6 @@ interface ProductDetailPageProps {
   }>;
 }
 
-// Categories array for the navigation section (same as other pages)
 const categories = [
   { 
     name: 'Headphones', 
@@ -47,18 +46,14 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   const allProducts = useQuery(api.products.getAllProducts);
   const product = useQuery(api.products.getProductBySlug, { slug });
 
-  // Alternative: Find product from all products
   const productFromAll = allProducts?.find(p => p.slug === slug);
   
-  // Use whichever product data is available
   const displayProduct = product || productFromAll;
 
-  // Get related products for "You May Also Like" (use the product's "others" field or get random)
   const relatedProducts = displayProduct?.others 
-    ? allProducts?.filter(p => displayProduct.others.includes(p.slug)).slice(0, 3)
-    : allProducts?.filter(p => p.slug !== slug).slice(0, 3) || [];
-
-  // Loading state
+  ? allProducts?.filter(p => displayProduct.others.includes(p.slug))?.slice(0, 3) || []
+  : allProducts?.filter(p => p.slug !== slug)?.slice(0, 3) || [];
+  
   if (allProducts === undefined) {
     return (
       <div className="min-h-screen flex flex-col bg-lighter">
@@ -71,7 +66,6 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
     );
   }
 
-  // Product not found
   if (!displayProduct) {
     return (
       <div className="min-h-screen flex flex-col bg-lighter">
@@ -114,16 +108,16 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
             Go Back
           </button>
 
-          {/* Product Overview */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-32">
-            {/* Product Image */}
-            <div className="relative h-96 lg:h-[560px] rounded-lg overflow-hidden bg-light">
-              <div className="w-full h-full flex items-center justify-center text-dark/20">
-                [{displayProduct.name} Image]
-              </div>
-            </div>
+          <div className="relative h-96 lg:h-[560px] rounded-lg overflow-hidden bg-light">
+            <Image
+              src={displayProduct.categoryImage?.desktop || `/assets/product-${displayProduct.slug}/desktop/image-product.jpg`}
+              alt={displayProduct.name}
+              fill
+              className="object-cover"
+            />
+          </div>
 
-            {/* Product Info */}
             <div className="flex flex-col justify-center space-y-6">
               {displayProduct.isNew && (
                 <p className="text-sm tracking-[0.6em] text-primary uppercase">
@@ -156,9 +150,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
             </div>
           </div>
 
-          {/* Features & In the Box */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-32">
-            {/* Features */}
             <div className="lg:col-span-2 space-y-6">
               <h2 className="text-2xl font-bold uppercase tracking-wider">
                 Features
@@ -168,7 +160,6 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
               </div>
             </div>
 
-            {/* In the Box */}
             <div className="space-y-6">
               <h2 className="text-2xl font-bold uppercase tracking-wider">
                 In the Box
@@ -186,32 +177,36 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
             </div>
           </div>
 
-          {/* Gallery */}
-          
           <div className="flex flex-col md:flex-row gap-4 mb-32">
-            {/* Left side - vertical stack */}
             <div className="flex flex-col gap-4 md:w-1/2">
               <div className="relative h-64 rounded-lg overflow-hidden bg-light">
-                <div className="w-full h-full flex items-center justify-center text-dark/20">
-                  [Gallery 1]
-                </div>
+                <Image
+                  src={displayProduct.gallery?.first?.desktop || `/assets/product-${displayProduct.slug}/desktop/image-gallery-1.jpg`}
+                  alt={`${displayProduct.name} gallery 1`}
+                  fill
+                  className="object-cover"
+                />
               </div>
               <div className="relative h-64 rounded-lg overflow-hidden bg-light">
-                <div className="w-full h-full flex items-center justify-center text-dark/20">
-                  [Gallery 2]
-                </div>
+                <Image
+                  src={displayProduct.gallery?.second?.desktop || `/assets/product-${displayProduct.slug}/desktop/image-gallery-2.jpg`}
+                  alt={`${displayProduct.name} gallery 2`}
+                  fill
+                  className="object-cover"
+                />
               </div>
             </div>
             
-            {/* Right side - single tall image */}
             <div className="relative h-64 md:h-[calc(128px+25rem)] rounded-lg overflow-hidden bg-light md:w-1/2">
-              <div className="w-full h-full flex items-center justify-center text-dark/20">
-                [Gallery 3]
-              </div>
+              <Image
+                src={displayProduct.gallery?.third?.desktop || `/assets/product-${displayProduct.slug}/desktop/image-gallery-3.jpg`}
+                alt={`${displayProduct.name} gallery 3`}
+                fill
+                className="object-cover"
+              />
             </div>
           </div>
 
-          {/* You May Also Like - FIXED ALIGNMENT */}
           <section className="mb-32">
             <h2 className="text-2xl font-bold uppercase tracking-wider text-center mb-12">
               you may also like
@@ -219,19 +214,19 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {relatedProducts.map((relatedProduct) => (
                 <div key={relatedProduct._id} className="text-center space-y-8 flex flex-col items-center">
-                  {/* Product Image - Square format */}
-                  <div className="relative w-full aspect-square max-w-64 rounded-lg overflow-hidden bg-light">
-                    <div className="w-full h-full flex items-center justify-center text-dark/20">
-                      [{relatedProduct.name} Image]
-                    </div>
-                  </div>
+                <div className="relative w-full aspect-square max-w-64 rounded-lg overflow-hidden bg-light">
+                  <Image
+                    src={relatedProduct.categoryImage?.mobile || `/assets/shared/desktop/image-category-thumbnail-${relatedProduct.category}.png`}
+                    alt={relatedProduct.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
                   
-                  {/* Product Name */}
                   <h3 className="text-xl font-bold uppercase tracking-wider">
                     {relatedProduct.name}
                   </h3>
                   
-                  {/* See Product Button */}
                   <Button href={`/product/${relatedProduct.slug}`} variant="primary">
                     See Product
                   </Button>
@@ -240,39 +235,38 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
             </div>
           </section>
 
-          {/* CATEGORIES SECTION - FIXED ALIGNMENT */}
-          <section className="py-20">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {categories.map((category) => (
-                <div key={category.slug} className="text-center flex flex-col items-center">
-                  <Link
-                    href={`/${category.slug}`}
-                    className="group block bg-light rounded-lg p-8 hover:shadow-lg transition-shadow relative w-full max-w-xs"
-                  >
-                    {/* Category Image - Square format */}
-                    <div className="relative w-32 h-32 mx-auto mb-6 rounded-lg overflow-hidden bg-white/50">
-                      <div className="w-full h-full flex items-center justify-center text-dark/20 text-xs">
-                        [{category.name} Image]
-                      </div>
-                    </div>
-                    
-                    {/* Category Name */}
-                    <h3 className="text-lg font-bold uppercase tracking-wider mb-4">
-                      {category.name}
-                    </h3>
-                    
-                    {/* Shop Link */}
-                    <span className="inline-flex items-center gap-2 text-sm font-bold text-dark/50 group-hover:text-primary transition-colors uppercase">
-                      Shop
-                      <ChevronRight className="w-4 h-4" />
-                    </span>
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </section>
+        <section className="py-20">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {categories.map((category) => (
+              <div key={category.slug} className="text-center flex flex-col items-center">
+                <Link
+                  href={`/${category.slug}`}
+                  className="group block bg-light rounded-lg pt-24 pb-8 px-8 hover:shadow-lg transition-shadow relative w-full max-w-xs"
+                >
+                  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-40 h-40">
+                    <Image
+                      src={category.image}
+                      alt={category.name}
+                      width={160}
+                      height={160}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  
+                  <h3 className="text-lg font-bold uppercase tracking-wider mb-4">
+                    {category.name}
+                  </h3>
+                  
+                  <span className="inline-flex items-center gap-2 text-sm font-bold text-dark/50 group-hover:text-primary transition-colors uppercase">
+                    Shop
+                    <ChevronRight className="w-4 h-4" />
+                  </span>
+                </Link>
+              </div>
+            ))}
+          </div>
+        </section>
 
-          {/* ABOUT SECTION */}
           <section className="pb-20">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="space-y-6 order-2 lg:order-1">
@@ -284,9 +278,12 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                 </p>
               </div>
               <div className="relative h-80 lg:h-96 rounded-lg overflow-hidden order-1 lg:order-2 bg-light">
-                <div className="w-full h-full flex items-center justify-center text-dark/20">
-                  [Best Audio Gear Image]
-                </div>
+                <Image
+                  src="/assets/shared/desktop/image-best-gear.jpg"
+                  alt="Best Audio Gear"
+                  fill
+                  className="object-cover"
+                />
               </div>
             </div>
           </section>
