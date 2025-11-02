@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  html {
+    @apply h-full scroll-smooth;
+  }
+  
+  body {
+    @apply h-full m-0 p-0 font-manrope bg-lighter text-dark antialiased;
+  }
+}
+
+@layer utilities {
+  .nav-link {
+    @apply text-sm font-bold tracking-widest uppercase transition-colors hover:text-primary;
+  }
+  
+  .btn-primary {
+    @apply bg-primary hover:bg-accent text-white font-bold text-sm tracking-widest uppercase px-8 py-4 transition-colors;
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "audiophile-ecommerce-starter",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "convex:start": "convex dev"
+  },
+  "dependencies": {
+    "autoprefixer": "^10.4.14",
+    "convex": "^1.28.0",
+    "lucide-react": "^0.552.0",
+    "next": "^16.0.1",
+    "postcss": "^8.4.24",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-hook-form": "^7.45.0",
+    "react-icons": "^5.5.0",
+    "resend": "^3.2.0",
+    "tailwindcss": "^3.4.13"
+  },
+  "devDependencies": {
+    "@types/node": "24.9.2",
+    "@types/react": "19.2.2",
+    "typescript": "^5.5.0"
+  }
+}
