@@ -76,18 +76,28 @@ export default function HomePage() {
                   </div>
                 </div>
                 
-                <Image
-                  src="/assets/home/desktop/image-speaker-zx9.png"
-                  alt="ZX9 Speaker"
-                  width={320}
-                  height={400}
-                  className="object-contain relative z-10 mt-6"
-                  priority
-                />
+                <picture>
+                  <source 
+                    media="(min-width: 1024px)" 
+                    srcSet="/assets/home/desktop/image-speaker-zx9.png"
+                  />
+                  <source 
+                    media="(min-width: 768px)" 
+                    srcSet="/assets/home/tablet/image-speaker-zx9.png" 
+                  />
+                  <Image
+                    src="/assets/home/mobile/image-speaker-zx9.png"
+                    alt="ZX9 Speaker"
+                    width={320}
+                    height={400}
+                    className="object-contain relative z-10 sm:-mt-10 lg:mt-16" 
+                    priority
+                  />
+                </picture>
               </div>
 
               <div className="space-y-6 text-center lg:text-left text-white lg:pl-12 relative z-20">
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wider">
+                <h2 className="text-4xl md:text-5xl md:mt-16 lg:text-6xl font-bold uppercase tracking-wider">
                   ZX9<br />Speaker
                 </h2>
                 <p className="text-white/75 leading-relaxed max-w-md mx-auto lg:mx-0 px-4 lg:px-0">
