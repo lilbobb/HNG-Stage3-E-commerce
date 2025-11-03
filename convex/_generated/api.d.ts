@@ -8,7 +8,6 @@
  * @module
  */
 
-import type * as fixImages from "../fixImages.js";
 import type * as orders from "../orders.js";
 import type * as products from "../products.js";
 
@@ -27,7 +26,6 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  fixImages: typeof fixImages;
   orders: typeof orders;
   products: typeof products;
 }>;

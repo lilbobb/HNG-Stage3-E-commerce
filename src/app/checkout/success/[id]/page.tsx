@@ -41,7 +41,7 @@ export default function SuccessModal({ isOpen, onClose, orderNumber, onSuccessCo
         onClick={onClose}
       />
       
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl mx-4">
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl px-4">
         <div className="bg-white rounded-lg p-6 md:p-8 max-h-[90vh] overflow-y-auto">
           <div className="mb-6">
             <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">

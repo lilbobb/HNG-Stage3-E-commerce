@@ -34,13 +34,12 @@ const categories = [
   },
 ];
 
+const getSafeImage = (url: string) => url || '/assets/shared/desktop/image-placeholder.png';
+
 export default function CategoryPage({ params }: CategoryPageProps) {
   const { category } = use(params);
-  
-  const products = useQuery(api.products.getProductsByCategory, { 
-    category 
-  }) || [];
 
+  const products = useQuery(api.products.getProductsByCategory, { category }) || [];
   const allProducts = useQuery(api.products.getAllProducts) || [];
 
   if (products === undefined || allProducts === undefined) {
@@ -62,7 +61,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   return (
     <div className="min-h-screen flex flex-col bg-lighter">
       <Header />
-      
+
       <section className="bg-dark text-white py-20">
         <div className="max-w-7xl mx-auto px-6 lg:px-24 text-center">
           <h1 className="text-4xl md:text-5xl font-bold uppercase tracking-wider">
@@ -93,13 +92,14 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                   index % 2 === 1 ? 'lg:order-2' : ''
                 }`}>
                   <picture>
-                    <source media="(min-width: 1024px)" srcSet={product.categoryImage.desktop} />
-                    <source media="(min-width: 768px)" srcSet={product.categoryImage.tablet} />
+                    <source media="(min-width: 1024px)" srcSet={getSafeImage(product.categoryImage.desktop)} />
+                    <source media="(min-width: 768px)" srcSet={getSafeImage(product.categoryImage.tablet)} />
                     <Image
-                      src={product.categoryImage.mobile}
+                      src={getSafeImage(product.categoryImage.mobile)}
                       alt={product.name}
                       fill
                       className="object-cover"
+                      unoptimized
                     />
                   </picture>
                 </div>
@@ -139,10 +139,11 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                   <div key={product._id} className="text-center space-y-6">
                     <div className="relative h-64 rounded-lg overflow-hidden bg-light">
                       <Image
-                        src={product.categoryImage.mobile} 
+                        src={getSafeImage(product.categoryImage.mobile)} 
                         alt={product.name}
                         fill
                         className="object-cover"
+                        unoptimized
                       />
                     </div>
                     <h3 className="text-xl font-bold uppercase tracking-wider">
@@ -158,61 +159,63 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           </section>
         )}
 
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-24">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {categories.map((cat) => (
-              <Link
-                key={cat.slug}
-                href={`/${cat.slug}`}
-                className="group bg-light rounded-lg pt-24 pb-8 px-8 text-center hover:shadow-lg transition-shadow relative"
-              >
-                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-40 h-40">
-                  <Image
-                    src={cat.image}
-                    alt={cat.name}
-                    width={160}
-                    height={160}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                
-                <h3 className="text-lg font-bold uppercase tracking-wider mb-4">
-                  {cat.name}
-                </h3>
-                
-                <span className="inline-flex items-center gap-2 text-sm font-bold text-dark/50 group-hover:text-primary transition-colors uppercase">
-                  Shop
-                  <ChevronRight className="w-4 h-4" />
-                </span>
-              </Link>
-            ))}
+        <section className="py-20">
+          <div className="max-w-7xl mx-auto px-6 lg:px-24">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {categories.map((cat) => (
+                <Link
+                  key={cat.slug}
+                  href={`/${cat.slug}`}
+                  className="group bg-light rounded-lg pt-24 pb-8 px-8 text-center hover:shadow-lg transition-shadow relative"
+                >
+                  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-40 h-40">
+                    <Image
+                      src={getSafeImage(cat.image)}
+                      alt={cat.name}
+                      width={160}
+                      height={160}
+                      className="w-full h-full object-contain"
+                      unoptimized
+                    />
+                  </div>
+                  
+                  <h3 className="text-lg font-bold uppercase tracking-wider mb-4">
+                    {cat.name}
+                  </h3>
+                  
+                  <span className="inline-flex items-center gap-2 text-sm font-bold text-dark/50 group-hover:text-primary transition-colors uppercase">
+                    Shop
+                    <ChevronRight className="w-4 h-4" />
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="pb-20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6 order-2 lg:order-1">
-              <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-wider">
-                Bringing you the <span className="text-primary">best</span> audio gear
-              </h2>
-              <p className="text-dark/75 leading-relaxed">
-                Located at the heart of New York City, Audiophile is the premier store for high end headphones, earphones, speakers, and audio accessories. We have a large showroom and luxury demonstration rooms available for you to browse and experience a wide range of our products. Stop by our store to meet some of the fantastic people who make Audiophile the best place to buy your portable audio equipment.
-              </p>
-            </div>
-            <div className="relative h-80 lg:h-96 rounded-lg overflow-hidden order-1 lg:order-2 bg-light">
-              <Image
-                src="/assets/shared/desktop/image-best-gear.jpg"
-                alt="Best Audio Gear"
-                fill
-                className="object-cover"
-              />
+        <section className="pb-20">
+          <div className="max-w-7xl mx-auto px-6 lg:px-24">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-6 order-2 lg:order-1">
+                <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-wider">
+                  Bringing you the <span className="text-primary">best</span> audio gear
+                </h2>
+                <p className="text-dark/75 leading-relaxed">
+                  Located at the heart of New York City, Audiophile is the premier store for high end headphones, earphones, speakers, and audio accessories. We have a large showroom and luxury demonstration rooms available for you to browse and experience a wide range of our products. Stop by our store to meet some of the fantastic people who make Audiophile the best place to buy your portable audio equipment.
+                </p>
+              </div>
+              <div className="relative h-80 lg:h-96 rounded-lg overflow-hidden order-1 lg:order-2 bg-light">
+                <Image
+                  src="/assets/shared/desktop/image-best-gear.jpg"
+                  alt="Best Audio Gear"
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
       </main>
       <Footer />
     </div>
