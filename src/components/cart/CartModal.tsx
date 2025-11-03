@@ -34,7 +34,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
       <div className="
           fixed z-50 bg-white rounded-lg shadow-xl flex flex-col max-h-[488px]
           w-[90%] max-w-[377px]
-          left-1/2 -translate-x-1/2 top-6
+          left-1/2 -translate-x-1/2 top-18
           lg:top-24 lg:right-24 lg:left-auto lg:translate-x-0
         ">
         <div className="flex justify-between items-center p-6 border-b border-gray-200">
