@@ -46,9 +46,12 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     return (
       <div className="min-h-screen flex flex-col bg-lighter">
         <Header />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">Loading products...</div>
+        <main className="flex-1 flex items-center justify-center min-h-[60vh] py-20">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-center">Loading products...</p>
         </div>
+        </main>
         <Footer />
       </div>
     );
