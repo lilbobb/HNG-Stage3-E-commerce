@@ -38,6 +38,8 @@ export const getAllProducts = query({
 export const getFeaturedProducts = query({
   handler: async (ctx) => {
     const allProducts = await ctx.db.query("products").collect();
+
+    console.log("All product slugs:", allProducts.map(p => p.slug));
     
     return {
       zx9: allProducts.find(p => p.slug === 'zx9-speaker'),
