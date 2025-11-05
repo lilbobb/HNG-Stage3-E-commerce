@@ -1,4 +1,3 @@
-// convex/schema.ts
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
@@ -31,7 +30,7 @@ export default defineSchema({
       second: v.object({ desktop: v.string(), mobile: v.string(), tablet: v.string() }),
       third: v.object({ desktop: v.string(), mobile: v.string(), tablet: v.string() }),
     }),
-    others: v.array(v.string()), // slugs of related products
+    others: v.array(v.string()), 
   })
     .index('by_slug', ['slug'])
     .index('by_category', ['category']),

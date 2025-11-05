@@ -42,7 +42,7 @@ export const getFeaturedProducts = query({
     return {
       zx9: allProducts.find(p => p.slug === 'zx9-speaker'),
       zx7: allProducts.find(p => p.slug === 'zx7-speaker'),
-      yx1: allProducts.find(p => p.slug === 'yx1-earphones'),
+      yx1: allProducts.find(p => p.slug === 'yx1-wireless-earphones'),
     };
   },
 });
