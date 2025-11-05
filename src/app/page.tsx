@@ -67,33 +67,24 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-24">
           <div className="bg-primary rounded-lg overflow-hidden relative">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center py-20 px-6 lg:px-24">
-              <div className="relative h-80 flex items-start justify-center">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="relative w-full h-full flex items-center justify-center mt-40">
+              <div className="relative flex items-center justify-center">
+          
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <div className="relative w-full h-full flex items-center justify-center">
                     <div className="absolute w-[350px] h-[350px] rounded-full border border-white/10" />
                     <div className="absolute w-[440px] h-[440px] rounded-full border border-white/10" />
-                    <div className="absolute w-[800px] h-[800px] rounded-full border border-white/10" />
+                    <div className="absolute w-[700px] h-[700px] rounded-full border border-white/10" />
                   </div>
                 </div>
                 
-                <picture>
-                  <source 
-                    media="(min-width: 1024px)" 
-                    srcSet="/assets/home/desktop/image-speaker-zx9.png"
-                  />
-                  <source 
-                    media="(min-width: 768px)" 
-                    srcSet="/assets/home/tablet/image-speaker-zx9.png" 
-                  />
-                  <Image
-                    src="/assets/home/mobile/image-speaker-zx9.png"
-                    alt="ZX9 Speaker"
-                    width={320}
-                    height={400}
-                    className="object-contain relative z-10 sm:-mt-10 lg:mt-16" 
-                    priority
-                  />
-                </picture>
+                <Image
+                  src="/assets/home/desktop/image-speaker-zx9.png"
+                  alt="ZX9 Speaker"
+                  width={0}
+                  height={0}
+                  sizes="(max-width:768px) 200px, (max-width:1024px) 300px, 400px"
+                  className="w-[200px] md:w-[300px] lg:w-[400px] h-auto  z-20 lg:-mb-24"
+                />
               </div>
 
               <div className="space-y-6 text-center lg:text-left text-white lg:pl-12 relative z-20">
@@ -109,6 +100,7 @@ export default function HomePage() {
                   </Button>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
