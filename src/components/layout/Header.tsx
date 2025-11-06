@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import CartModal from '@/components/cart/CartModal';
 import { PRODUCT_SLUGS } from '@/lib/constants';
+import { useCartContext } from '../cart/CartContext';
 
 interface HeaderProps {
   showHero?: boolean;
@@ -13,6 +14,9 @@ interface HeaderProps {
 const Header = ({ showHero = false }: HeaderProps) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { items } = useCartContext();
+
+   const cartItemCount = items.reduce((total, item) => total + item.quantity, 0);
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -67,6 +71,11 @@ const Header = ({ showHero = false }: HeaderProps) => {
                 className="text-white hover:text-primary transition-colors relative z-50"
                 aria-label="Shopping cart"
               >
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-primary text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    {cartItemCount > 9 ? '9+' : cartItemCount}
+                  </span>
+                )}
                 <img src="/assets/carts.svg" alt="Cart" className="w-6 h-6" />
               </button>
             </nav>
