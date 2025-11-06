@@ -8,6 +8,7 @@ import Input from '@/components/ui/Input';
 import CartItem from '@/components/cart/CartItem';
 import SuccessModal from '@/app/checkout/success/[id]/page';
 import { useCartContext } from '@/components/cart/CartContext';
+import Image from 'next/image';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -299,7 +300,15 @@ export default function CheckoutPage() {
 
                       {paymentMethod === 'cash' && (
                         <div className="flex gap-4 p-4 bg-gray-50 rounded-lg mt-6">
-                          <span className="text-3xl">💵</span>
+                          <div className="w-12 h-12 flex-shrink-0">
+                            <Image 
+                              src="/assets/checkout/icon-cash-on-delivery.svg" 
+                              alt="Cash on delivery" 
+                              width={48}
+                              height={48}
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
                           <p className="text-sm text-dark/50 leading-relaxed">
                             The 'Cash on Delivery' option enables you to pay in cash when our delivery courier arrives at your residence. Just make sure your address is correct so that your order will not be cancelled.
                           </p>
