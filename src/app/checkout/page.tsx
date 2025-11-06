@@ -68,9 +68,7 @@ export default function CheckoutPage() {
       createdAt: Date.now(),
     };
 
-    try {
-      console.log('Sending order data:', orderData);
-      
+    try {      
       const response = await fetch('/api/orders', {
         method: 'POST',
         headers: {
@@ -80,29 +78,22 @@ export default function CheckoutPage() {
       });
 
       const responseText = await response.text();
-      console.log('Raw API response:', responseText);
       
       let result;
       try {
         result = JSON.parse(responseText);
       } catch (parseError) {
-        console.error('Failed to parse JSON response:', responseText);
         throw new Error('Invalid JSON response from server');
       }
-
-      console.log('Parsed API Response:', result);
-      console.log('Response status:', response.status);
 
       if (response.ok) {
         const newOrderNumber = orderData.orderNumber;
         setOrderNumber(newOrderNumber);
         setShowSuccessModal(true);
       } else {
-        console.error('Failed to create order. Status:', response.status, 'Error:', result);
         alert(`Failed to create order: ${result.error || result.message || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error('Error submitting order:', error);
       alert('Error: ' + (error instanceof Error ? error.message : 'Unknown error'));
     } finally {
       setLoading(false);

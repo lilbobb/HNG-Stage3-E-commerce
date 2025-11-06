@@ -95,7 +95,7 @@ const Header = ({ showHero = false }: HeaderProps) => {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="px-6 py-8 pb-12 pt-24 max-h-[calc(100vh-6rem)] overflow-y-auto">
-              <div className="grid grid-cols-1 gap-16 max-w-md mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-4 max-w-md md:max-w-full mx-auto">
                 <Link 
                   href="/headphones"
                   className="group bg-gray-100 rounded-lg pt-20 pb-6 px-6 text-center hover:shadow-lg transition-shadow relative"
